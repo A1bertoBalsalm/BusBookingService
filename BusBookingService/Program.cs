@@ -90,7 +90,7 @@ namespace BusBookingService
 
             Console.WriteLine("\n BOOK \n" + ("").PadRight(24, '-')+"\n Antalet fria plaster: " + free+"\n Antalet fria fönster plaster: "+freewindowseats+"\n" + ("").PadRight(24, '-'));
 
-            Console.WriteLine(" 1. Fönsterplats \n 2. Vanlig plats \n 3. Meny ");
+            Console.WriteLine(" [1] Fönsterplats \n [2] Vanlig plats \n [3] Meny ");
 
             string BookChoice = Console.ReadLine();
             
@@ -111,7 +111,16 @@ namespace BusBookingService
                     }
                     break;
                 case 2:
-                    SearchBooking(false);
+                    if(freewindowseats == free)
+                    {
+                        SearchBooking(false);
+
+                    }
+                    else
+                    {
+                        // Samma här
+                    }
+                    
 
                     break;
                 case 3:
@@ -144,6 +153,7 @@ namespace BusBookingService
                     free++;
                     freewindow = true;
 
+
                     
                 }
                 if (i == 17)
@@ -152,31 +162,30 @@ namespace BusBookingService
                     findwindowseats = findwindowseats - 3;
 
                 }
-                else if (findwindowseats == 0)
+                if (findwindowseats == 0 || findwindowseats == 3)
                 {
-                    Console.WriteLine(i + 1 + " Är en fönster plats Å det är loop " + findwindowseats);
+                    
                     if (freewindow)
                     {
                         freewindowseats++;
                     }
-                   
-                    findwindowseats++;
-                    // Tredje gången kan den sättas på 0 ???
-                }
-                else if (findwindowseats == 3)
-                {
-                    Console.WriteLine(i + 1 + " Är en fönster plats Å det är loop " + findwindowseats);
-                    findwindowseats = 0;
-                    if (freewindow)
+        
+                    if (findwindowseats == 3)
                     {
-                        freewindowseats++;
-                    }
+                        findwindowseats = -1;
 
+                    }
+                    findwindowseats++;
+
+
+
+                    // Tredje gången kan den sättas på 0 ???
                 }
                 else
                 {
                     findwindowseats++;
                 }
+            
                 freewindow = false;
 
 
@@ -200,7 +209,53 @@ namespace BusBookingService
             for (int i = 0; i < Booked.Length; i++)
             {
 
-                if (findwindowseats != 0 || findwindowseats != 3 && Window == false)
+             
+                if (i == 17)
+                {
+
+                    findwindowseats = findwindowseats - 3;
+
+                }
+                if (findwindowseats == 0 || findwindowseats == 3 && Window == true)
+                {
+
+                    if (Booked[i] == false)
+                    {
+                        UserInfo(i);
+                        break;
+
+                    }
+
+                    if (findwindowseats == 3)
+                    {
+                        findwindowseats = -1;
+
+                    }
+                    findwindowseats++;
+
+
+
+                    // Tredje gången kan den sättas på 0 ???
+                }
+                else if(Window == false)
+                {
+
+                    if (Booked[i] == false)
+                    {
+                        UserInfo(i);
+                        break;
+
+                    }
+
+                }
+                else
+                {
+                    findwindowseats++;
+                }
+
+                freewindow = false;
+
+                /*if (findwindowseats != 0 || findwindowseats != 3 && Window == false)
                 {
                     if (Booked[i] == false)
                     {
@@ -252,7 +307,8 @@ namespace BusBookingService
                 else
                 {
                     findwindowseats++;
-                }
+               */
+            }
                 
 
 
