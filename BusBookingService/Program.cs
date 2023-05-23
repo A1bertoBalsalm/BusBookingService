@@ -10,21 +10,17 @@ namespace BusBookingService
 {
     internal class Program
     {
-        // Sista 10 av platserna är fönster plaster
-        static Boolean[] Booked = new bool[21];
-        
         //Rows = platser
         //Columm 0 = Förnamn
         //Columm 1 = Efternamn
         //Columm 2 = Personnummer
         //Columm 3 = Kön
         //Columm 4 = Ålder
-        static String[,] BusSeats = new string[21, 5];
+        //Columm 5 = Plats
 
-        static String[] BusSeatsSorted = new String[21];
-        static int[] BusSeatsSortedAge = new int[21];
-
-
+        static Boolean[] Booked = new bool[21]; //Varje plats om den är tagen eller inte
+        static String[,] BusSeats = new string[21, 6]; // Information om varje passagerae
+  
         static int free = 0;
         static int freewindowseats = 0;
 
@@ -36,16 +32,12 @@ namespace BusBookingService
         static double KidsPrice = 149.90;
         static double ElderlyPrice = 200.0;
 
-        static String[,] SortedBusSeats = new String[21, 6];
+       
 
 
 
 
-
-        static void Main(string[] args)
-        {
-            Meny();
-        }
+        static void Main(string[] args) => Meny();
 
         static void Meny()
         {
@@ -53,7 +45,7 @@ namespace BusBookingService
             Console.WriteLine(" BUS BOOKING SERVICE \n" +("").PadRight(24, '-')+ "\n 1. Book \n 2. Cancel Booking \n 3. Print Out ");
 
             string MenyChoice = Console.ReadLine();
-            Console.WriteLine(MenyChoice);
+         ;
             switch (Convert.ToInt32(MenyChoice))
             {
                 case 1:
@@ -86,7 +78,12 @@ namespace BusBookingService
         static void Book()
         {
 
-            Search();
+            Search(); //Metod för att hitta lediga plateser
+
+            for (int i = 0; i < Booked.Length; i++)
+            {
+                Console.WriteLine(Booked[i]);
+            }
 
             Console.WriteLine("\n BOOK \n" + ("").PadRight(24, '-')+"\n Antalet fria plaster: " + free+"\n Antalet fria fönster plaster: "+freewindowseats+"\n" + ("").PadRight(24, '-'));
 
@@ -118,6 +115,7 @@ namespace BusBookingService
                     }
                     else
                     {
+                        SearchBooking(false);
                         // Samma här
                     }
                     
@@ -136,7 +134,7 @@ namespace BusBookingService
         }
 
 
-        static void Search()
+        static void Search() // Leter efter lediga platser
         {
             
             free = 0;
@@ -148,7 +146,7 @@ namespace BusBookingService
             {
 
 
-                if (false == Booked[i])
+                if (false == Booked[i]) // Om platen är inte tagen
                 {
                     free++;
                     freewindow = true;
@@ -156,30 +154,27 @@ namespace BusBookingService
 
                     
                 }
-                if (i == 17)
+                if (i == 17) // Vid 17 är det baksidan av bussen så tre sätten imellan
                 {
 
-                    findwindowseats = findwindowseats - 3;
+                    findwindowseats -= 3;
 
                 }
-                if (findwindowseats == 0 || findwindowseats == 3)
+                if (findwindowseats == 0 || findwindowseats == 3) // Om det är en fönsterplats för att varje 0 och 3 varv i loopen finns det en fönsterplats
                 {
                     
-                    if (freewindow)
+                    if (freewindow) // Om vi vet att den är ledig från innan
                     {
                         freewindowseats++;
                     }
         
-                    if (findwindowseats == 3)
+                    if (findwindowseats == 3) 
                     {
                         findwindowseats = -1;
 
                     }
                     findwindowseats++;
 
-
-
-                    // Tredje gången kan den sättas på 0 ???
                 }
                 else
                 {
@@ -200,10 +195,11 @@ namespace BusBookingService
 
 
 
-        static void SearchBooking(Boolean Window)
+        static void SearchBooking(Boolean Window) // Ungeför likdan men window säger om kunden vill ha en fönsterplats
         {
             
             int findwindowseats = 0;
+            
             
 
             for (int i = 0; i < Booked.Length; i++)
@@ -213,11 +209,12 @@ namespace BusBookingService
                 if (i == 17)
                 {
 
-                    findwindowseats = findwindowseats - 3;
+                    findwindowseats -= 3;
 
                 }
-                if (findwindowseats == 0 || findwindowseats == 3 && Window == true)
+                else if (Window == true && (findwindowseats == 0 || findwindowseats == 3))     
                 {
+
 
                     if (Booked[i] == false)
                     {
@@ -235,15 +232,16 @@ namespace BusBookingService
 
 
 
-                    // Tredje gången kan den sättas på 0 ???
+                   
                 }
-                else if(Window == false)
+                else if (Window == false && (findwindowseats != 0 && findwindowseats != 3))
                 {
 
                     if (Booked[i] == false)
                     {
                         UserInfo(i);
                         break;
+                        
 
                     }
 
@@ -251,63 +249,13 @@ namespace BusBookingService
                 else
                 {
                     findwindowseats++;
-                }
-
-                freewindow = false;
-
-                /*if (findwindowseats != 0 || findwindowseats != 3 && Window == false)
-                {
-                    if (Booked[i] == false)
-                    {
-                     
-                        UserInfo(i);
-
-                    }
+                   
                     
                 }
-                else if (i == 17)
-                {
+                
 
-                    findwindowseats = findwindowseats - 3;
+                
 
-                }
-                else if (findwindowseats == 0)
-                {
-                    Console.WriteLine(i + 1 + " Är en fönster plats Å det är loop " + findwindowseats);
-                    if (Window == true)
-                    {
-                        if (Booked[i] == false)
-                        {
-                            UserInfo(i);
-                            break;
-
-                        }
-                        
-                    }
-
-                    findwindowseats++;
-
-                }
-                else if (findwindowseats == 3)
-                {
-                    Console.WriteLine(i + 1 + " Är en fönster plats Å det är loop " + findwindowseats);
-                    findwindowseats = 0;
-                    if (Window == true)
-                    {
-                        if (Booked[i] == false)
-                        {
-                            UserInfo(i);
-                            break;
-
-                        }
-                    }
-
-                }
-          
-                else
-                {
-                    findwindowseats++;
-               */
             }
                 
 
@@ -315,15 +263,15 @@ namespace BusBookingService
 
 
 
-            }
-
-
-
-
-
         }
 
-        static void UserInfo(int i)
+
+
+
+
+        
+
+        static void UserInfo(int i) // Här skriver kunden in sin data
         {
             Console.WriteLine("Plats: "+i);
 
@@ -344,16 +292,19 @@ namespace BusBookingService
             // SocialSecurityNumber
             string SSN = Console.ReadLine();
 
-
-            BusSeats[i, 0] = Name.ToLower(); 
+         
+            BusSeats[i, 0] = Name.ToLower();     // Så att vi kan söka efter den senare 
 
             BusSeats[i, 1] = Lastname.ToLower(); 
 
             BusSeats[i, 3] = Gender; 
 
-            BusSeats[i, 2] = SSN; 
+            BusSeats[i, 2] = SSN;
 
-          
+            // Plats
+            BusSeats[i, 4] = i.ToString();
+
+            // Tycke att det skulle vara tråkigt att göra det vanligt så här är lösningen för 05:or
             int Year = Convert.ToInt32(SSN.Substring(0,4));
             int Month = Convert.ToInt32(SSN.Substring(4,2));
             int Day = Convert.ToInt32(SSN.Substring(6,2));
@@ -361,7 +312,7 @@ namespace BusBookingService
             var born = new DateTime(Year, Month, Day);
             var today = DateTime.Now;
             var diffOfDates = today - born;
-
+            // Dagar delet till år som sedan kollar där nera om det är 18 upp
             int Age = Convert.ToInt32(diffOfDates.TotalDays) / 365;
 
             BusSeats[i, 4] =  Age.ToString();
@@ -369,7 +320,7 @@ namespace BusBookingService
             
 
             Double Pris;
-
+            // Kollar vilket pris kunden ska få och lägger till dens årsgrupp i bussen
             if(Age < 18)
             {
                 Console.WriteLine("du är underårig");
@@ -383,10 +334,10 @@ namespace BusBookingService
 
             
 
-                
+              
                 Console.WriteLine("du är gammal");
                 Elderly++;
-                Pris = Elderly;
+                Pris = ElderlyPrice;
 
             }
             else
@@ -454,7 +405,7 @@ namespace BusBookingService
            
         }
 
-        static void SearchUser(String DataSearch, int Datatype)
+        static void SearchUser(String DataSearch, int Datatype) // Dataserach är värdet på det som söks och Datatyp säger vilken sorts det är
         {
             DataSearch = DataSearch.ToLower();
             //Columm 0 = Förnamn
@@ -465,7 +416,8 @@ namespace BusBookingService
 
 
             int j = 0;
-
+           
+            //Koller efter en match
             for (int i = 0; i < 21; i++)
             {
                 if (DataSearch == BusSeats[i, Datatype])
@@ -477,7 +429,8 @@ namespace BusBookingService
                 }
 
             }
-            Console.WriteLine("Ostbåge");
+            
+            // Denna loop fungerar med att dubbel kolla om det är verkligen du 
             for (int i = 0;i < j;i++) {
 
                 Console.WriteLine("Säte: " + FindBooked[i] +" Namn: "+BusSeats[FindBooked[i], 0]+" Personnummer: "+BusSeats[FindBooked[i],2]);
@@ -531,127 +484,81 @@ namespace BusBookingService
 
         static void BusData()
         {
-
-            BubbleSort();
-
-            // Output the header.
-            Console.Write("Plats".PadRight(15));
-            Console.Write("Förnamn".PadRight(15));
-            Console.Write("Efternamn".PadRight(17));
-            Console.Write("Personnummer".PadRight(20));
-            Console.Write("Kön".PadRight(11));
-            Console.WriteLine("Ålder");
-
-            // Output array.
+            //Bubblesort
             for (int i = 0; i < 21; i++)
             {
-                if(true == Booked[i])
-                {
-                    Console.Write(i+"".PadRight(15));
-                    Console.Write(SortedBusSeats[i, 0].PadRight(15));
-                    Console.Write(SortedBusSeats[i, 1].PadRight(17));
-                    Console.Write(SortedBusSeats[i, 2].PadRight(20));
-                    Console.Write(SortedBusSeats[i, 3].PadRight(11));
-                    Console.WriteLine(SortedBusSeats[i, 4]);
 
-                }
-             
-                
-            }
-
-       
-        }
-        static void BubbleSort()
-        {
-
-
-
-            String[] tempArray = new string[5];
-
-            int[] seatsFilled = new int[21];
-
-           
-            
-            int e = 0;
-           
-
-            for(int i  = 0; i < 5; i++)
-            {
-                if (true == Booked[i])
-                {
-
-                    seatsFilled[e] = i;
-                    e++;
-                    
-                    
-
-                }
-            }
-
-            //Rows = platser
-            //Columm 0 = Förnamn
-            //Columm 1 = Efternamn
-            //Columm 2 = Personnummer
-            //Columm 3 = Kön
-            //Columm 4 = Ålder
-
-
-
-            for (int i = 0; i < 21; i++)
-            {
-                
                 for (int j = 0; j < 21 - 1; j++)
                 {
-                    if (Convert.ToInt32(BusSeats[seatsFilled[j],4]) > Convert.ToInt32(BusSeats[seatsFilled[j+1],4]))
+                    if (Convert.ToInt32(BusSeats[j, 4]) > Convert.ToInt32(BusSeats[j + 1, 4]))
                     {
-                       
-                        for(int k = 0; k < 5; k++)
+                        for (int k = 0; k < 6; k++)
                         {
-                            SortedBusSeats[j+1, k] = BusSeats[seatsFilled[j], k];
-
-                        }
-                        for( int k = 0; k < 5; k++)
-                        {
-                            SortedBusSeats[j, k] = BusSeats[seatsFilled[j + 1], k];
-
-                        }
                         
-  
+                            (BusSeats[j + 1, k], BusSeats[j, k]) = (BusSeats[j, k], BusSeats[j + 1, k]);
+                        }
+
+
+
+
                     }
                 }
             }
 
+
+            //Skriver ut personerna
+            int rows = BusSeats.GetLength(0);
+
+            //Header
+            Console.WriteLine("Plats\tFörnamn\t\tEfternamn\tPersonnummer\tKön\tÅlder");
+
+            // Loop genom varje row
+            for (int i = 0; i < rows; i++)
+            {
+                
+                bool blank = false;
+
+
+                // Loop genom varje column
+                for (int j = 0; j < 5; j++)
+                {
+                    string Isitblank = BusSeats[i, j];
+                    
+                    if (string.IsNullOrEmpty(Isitblank)) // Är row blank
+                    {
+                        blank = true;
+                        break;
+                    }
+
+                    Console.Write($"{BusSeats[i, j]}\t");
+ 
+                    // justera avståndet för namn och efternamns kolumnerna
+                    if (j == 1 || j == 2)
+                    {
+                        Console.Write("\t");
+                    }
+                }
+                if (!blank) // Om den är inte blank gå till nästa linje
+                {
+                    Console.WriteLine();
+                }
+
+               
+            }
+
+
+          
+            string ost = Console.ReadLine();
+            if (ost == "1")
+            {
+                Meny();
+
+            }
+
+
         }
-
-
+ 
 
     }
 }
 
-/*
-boolean swap = true;
-int temp_array[] = new int[4];
-while (swap)
-{
-    swap = false;
-    for (int i = 0; i < matchesplayed - 1; i++)
-    {
-        if (leaderboard_data[i][3] < leaderboard_data[i + 1][3])
-        {
-            swap = true;
-            for (int j = 0; j < 4; j++)
-            {
-                temp_array[j] = leaderboard_data[i][j];
-            }
-            for (int j = 0; j < 4; j++)
-            {
-                leaderboard_data[i][j] = leaderboard_data[i + 1][j];
-            }
-            for (int j = 0; j < 4; j++)
-            {
-                leaderboard_data[i + 1][j] = temp_array[j];
-            }
-        }
-    }
-}
-*/

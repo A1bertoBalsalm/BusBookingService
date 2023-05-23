@@ -1,0 +1,27 @@
+      {
+
+            { "John", "Doe", "19890101", "Man", "32", "17" },
+            { "Alice", "Smith", "19950214", "Man", "28", "5" },
+            { "Robert", "Johnson", "19840227", "Man", "37", "9" },
+            { "Emily", "Brown", "19901008", "Man", "31", "6" },
+            { "Daniel", "Miller", "19930721", "Man", "28", "13" },
+            { "Olivia", "Davis", "19980703", "Man", "23", "12" },
+            { "Michael", "Wilson", "19851115", "Man", "36", "15" },
+            { "Sophia", "Taylor", "19900630", "Man", "31", "4" },
+            { "Matthew", "Anderson", "19920918", "Man", "29", "20" },
+            { "Emma", "Thomas", "19941207", "Man", "27", "2" },
+            { "David", "Martinez", "19870711", "Man", "34", "14" },
+            { "Abigail", "Jackson", "19960123", "Man", "25", "7" },
+            { "James", "Harris", "19830209", "Man", "39", "10" },
+            { "Charlotte", "Clark", "19920517", "Man", "29", "1" },
+            { "Andrew", "Lewis", "19871203", "Man", "34", "18" },
+            { "Isabella", "Adams", "19910612", "Man", "31", "11" },
+            { "Joseph", "Hall", "19860529", "Man", "36", "3" },
+            { "Ava", "Garcia", "19971105", "Man", "24", "16" },
+            { "William", "Lee", "19890624", "Man", "32", "21" },
+            { "Mia", "Turner", "19931219", "Man", "28", "8" },
+            { "Alexander", "Parker", "19841005", "Man", "37", "19" }
+        };
+
+
+        { true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true };
