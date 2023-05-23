@@ -80,11 +80,6 @@ namespace BusBookingService
 
             Search(); //Metod för att hitta lediga plateser
 
-            for (int i = 0; i < Booked.Length; i++)
-            {
-                Console.WriteLine(Booked[i]);
-            }
-
             Console.WriteLine("\n BOOK \n" + ("").PadRight(24, '-')+"\n Antalet fria plaster: " + free+"\n Antalet fria fönster plaster: "+freewindowseats+"\n" + ("").PadRight(24, '-'));
 
             Console.WriteLine(" [1] Fönsterplats \n [2] Vanlig plats \n [3] Meny ");
@@ -287,6 +282,20 @@ namespace BusBookingService
 
             string Gender = Console.ReadLine();
 
+            switch (Int32.Parse(Gender))
+            {
+                case 1:
+                    Gender = "Man";
+                    break;
+                case 2:
+                    Gender = "Kvinna";
+                    break;
+
+                default:
+                    Gender = "Annan";
+                    break;
+            }
+
             Console.WriteLine("Personummer YYYYMMDD ");
 
             // SocialSecurityNumber
@@ -302,7 +311,8 @@ namespace BusBookingService
             BusSeats[i, 2] = SSN;
 
             // Plats
-            BusSeats[i, 4] = i.ToString();
+            BusSeats[i, 5] = i.ToString();
+           
 
             // Tycke att det skulle vara tråkigt att göra det vanligt så här är lösningen för 05:or
             int Year = Convert.ToInt32(SSN.Substring(0,4));
@@ -433,7 +443,7 @@ namespace BusBookingService
             // Denna loop fungerar med att dubbel kolla om det är verkligen du 
             for (int i = 0;i < j;i++) {
 
-                Console.WriteLine("Säte: " + FindBooked[i] +" Namn: "+BusSeats[FindBooked[i], 0]+" Personnummer: "+BusSeats[FindBooked[i],2]);
+                Console.WriteLine("Säte: " + BusSeats[FindBooked[i], 5] + " Namn: "+BusSeats[FindBooked[i], 0]+" Personnummer: "+BusSeats[FindBooked[i],2]);
                 Console.WriteLine("VARNING: ÄR DETTA DIN PLATS Y/N, N: Gå till nästa match");
                 String ChooseYourSeat = Console.ReadLine().ToLower();
                 if (ChooseYourSeat == "y")
@@ -461,8 +471,8 @@ namespace BusBookingService
                      
                     }
 
-
-                    Booked[FindBooked[i]] = false;
+                    int CancelSeat = Int32.Parse(BusSeats[FindBooked[i], 5]);
+                    Booked[CancelSeat] = false;
  
                     Console.WriteLine("Avbokad");
 
@@ -508,9 +518,10 @@ namespace BusBookingService
 
             //Skriver ut personerna
             int rows = BusSeats.GetLength(0);
+            int columm = BusSeats.GetLength(1);
 
             //Header
-            Console.WriteLine("Plats\tFörnamn\t\tEfternamn\tPersonnummer\tKön\tÅlder");
+            Console.WriteLine("Förnamn\tEfternamn\tPersonnummer\tKön\t\tÅlder\tPlats");
 
             // Loop genom varje row
             for (int i = 0; i < rows; i++)
@@ -520,7 +531,7 @@ namespace BusBookingService
 
 
                 // Loop genom varje column
-                for (int j = 0; j < 5; j++)
+                for (int j = 0; j < columm; j++)
                 {
                     string Isitblank = BusSeats[i, j];
                     
@@ -531,12 +542,16 @@ namespace BusBookingService
                     }
 
                     Console.Write($"{BusSeats[i, j]}\t");
- 
+                    
+
                     // justera avståndet för namn och efternamns kolumnerna
                     if (j == 1 || j == 2)
                     {
                         Console.Write("\t");
                     }
+                   
+
+
                 }
                 if (!blank) // Om den är inte blank gå till nästa linje
                 {
