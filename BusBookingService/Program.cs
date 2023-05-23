@@ -521,7 +521,7 @@ namespace BusBookingService
             int columm = BusSeats.GetLength(1);
 
             //Header
-            Console.WriteLine("Förnamn\tEfternamn\tPersonnummer\tKön\t\tÅlder\tPlats");
+            Console.WriteLine("Förnamn\tEfternamn\tPersonnummer\t\tKön\t\tÅlder\tPlats");
 
             // Loop genom varje row
             for (int i = 0; i < rows; i++)
@@ -545,7 +545,7 @@ namespace BusBookingService
                     
 
                     // justera avståndet för namn och efternamns kolumnerna
-                    if (j == 1 || j == 2)
+                    if (j == 1 || j == 2 || j == 3 )
                     {
                         Console.Write("\t");
                     }
