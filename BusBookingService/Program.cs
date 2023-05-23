@@ -440,7 +440,7 @@ namespace BusBookingService
 
             }
             
-            // Denna loop fungerar med att dubbel kolla om det är verkligen du 
+            // Denna loop fungerar med att dubbelkolla om det är verkligen du
             for (int i = 0;i < j;i++) {
 
                 Console.WriteLine("Säte: " + BusSeats[FindBooked[i], 5] + " Namn: "+BusSeats[FindBooked[i], 0]+" Personnummer: "+BusSeats[FindBooked[i],2]);
@@ -560,11 +560,14 @@ namespace BusBookingService
 
                
             }
+            double TotalProfit = (Kids*KidsPrice)+(Elderly*ElderlyPrice)+(Adults*AdultsPrice);
+            Console.WriteLine("Total profit: "+TotalProfit+"\n[3] Meny");
 
 
-          
-            string ost = Console.ReadLine();
-            if (ost == "1")
+
+
+            string Userinput = Console.ReadLine();
+            if (Userinput == "3")
             {
                 Meny();
 
