@@ -86,9 +86,6 @@ namespace BusBookingService
 
             string BookChoice = Console.ReadLine();
             
-
-
-
             switch (Convert.ToInt32(BookChoice))
             {
                 case 1:
@@ -114,7 +111,6 @@ namespace BusBookingService
                         // Samma här
                     }
                     
-
                     break;
                 case 3:
                     Meny();
@@ -140,14 +136,12 @@ namespace BusBookingService
             for (int i = 0; i < Booked.Length; i++)
             {
 
-
                 if (false == Booked[i]) // Om platen är inte tagen
                 {
+
                     free++;
                     freewindow = true;
 
-
-                    
                 }
                 if (i == 17) // Vid 17 är det baksidan av bussen så tre sätten imellan
                 {
@@ -178,17 +172,8 @@ namespace BusBookingService
             
                 freewindow = false;
 
-
-
-
-
             }
-
- 
-
         }
-
-
 
         static void SearchBooking(Boolean Window) // Ungeför likdan men window säger om kunden vill ha en fönsterplats
         {
@@ -278,7 +263,7 @@ namespace BusBookingService
 
             string Lastname = Console.ReadLine();
 
-            Console.WriteLine("Gender 1. Man 2. Kvinna 3. Annan");
+            Console.WriteLine("Gender: [1] Man [2] Kvinna [3] Annan");
 
             string Gender = Console.ReadLine();
 
@@ -327,7 +312,6 @@ namespace BusBookingService
 
             BusSeats[i, 4] =  Age.ToString();
 
-            
 
             Double Pris;
             // Kollar vilket pris kunden ska få och lägger till dens årsgrupp i bussen
@@ -341,10 +325,7 @@ namespace BusBookingService
             }
             else if(Age > 69) 
             {
-
-            
-
-              
+ 
                 Console.WriteLine("du är gammal");
                 Elderly++;
                 Pris = ElderlyPrice;
@@ -359,7 +340,7 @@ namespace BusBookingService
 
             }
 
-            Console.WriteLine("Total Priset "+(Pris.ToString())+" Confimera 1."+" Cancel 2.");
+            Console.WriteLine("Total Priset "+(Pris.ToString())+"[1] Confimera"+" [2] Cancel");
 
             String Confirm = Console.ReadLine();
 
@@ -388,7 +369,7 @@ namespace BusBookingService
 
         private static void CancelBooking()
         {
-            Console.WriteLine("1. Avboka med ditt förnamn 2. Avboka med ditt Personnummer 3. Menu");
+            Console.WriteLine("[1] Avboka med ditt förnamn [2] Avboka med ditt Personnummer [3] Menu");
             String Cancel = Console.ReadLine();
             switch (Convert.ToInt16(Cancel))
             {
@@ -475,6 +456,8 @@ namespace BusBookingService
                     Booked[CancelSeat] = false;
  
                     Console.WriteLine("Avbokad");
+
+                    Meny();
 
 
                 }
