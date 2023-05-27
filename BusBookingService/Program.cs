@@ -159,7 +159,7 @@ namespace BusBookingService
 
         }
 
-        static double ProfitRecursion(int adults, int kids, int elderly) // En recursive metod som räknar profit för passagare
+        static double ProfitRecursion(int adults, int kids, int elderly) // En recursiom metod som räknar profit för passagare
         {
             if (adults == 0 && kids == 0 && elderly == 0)
             {
@@ -225,7 +225,7 @@ namespace BusBookingService
                         FreeWindowSeats++;
                     }
         
-                    if (findWindowSeats == 3) 
+                    if (findWindowSeats == 3) // Här börjar fönster loopen om
                     {
                         findWindowSeats = -1;
 
@@ -368,11 +368,13 @@ namespace BusBookingService
                     // SocialSecurityNumber
                     SSN = Console.ReadLine();
 
-                    // Tycke att det skulle vara tråkigt att göra det vanligt så här är lösningen för 05:or
+                    // Tyckte att det skulle vara tråkigt att göra det vanligt så här är lösningen för 05:or
+                    // Hittar alla delar om personnummret
                     int year = Convert.ToInt32(SSN.Substring(0, 4));
                     int month = Convert.ToInt32(SSN.Substring(4, 2));
                     int day = Convert.ToInt32(SSN.Substring(6, 2));
 
+                    // Räknar dagar
                     var born = new DateTime(year, month, day);
                     var today = DateTime.Now;
                     var diffOfDates = today - born;
@@ -388,7 +390,7 @@ namespace BusBookingService
             }
           
          
-            BusSeats[i, 0] = name.ToLower();     // Så att vi kan söka efter den senare 
+            BusSeats[i, 0] = name.ToLower();     // Tolower Så att vi kan söka efter den senare 
 
             BusSeats[i, 1] = lastname.ToLower(); 
 
@@ -493,7 +495,7 @@ namespace BusBookingService
                         SearchUser(name, 0);
                         break;
                     case 2:
-                        Console.WriteLine("Skriv Ditt personnummer:");
+                        Console.WriteLine("Skriv Ditt Personnummer YYYYMMDD:");
                         String SSN = Console.ReadLine();
                         SearchUser(SSN, 2);
                         break;
@@ -551,7 +553,7 @@ namespace BusBookingService
             // Denna loop fungerar med att dubbel kolla om det är verkligen du 
             for (int i = 0;i < j;i++) {
 
-             
+                // Den tar alla matchade i sök metoden och går igenom dom för att hitta den rätta
                 Console.WriteLine("Plats: " + BusSeats[findBooked[i], 5] + " Namn: "+BusSeats[findBooked[i], 0]+" Personnummer: "+BusSeats[findBooked[i],2]+ "\n VARNING: ÄR DETTA DIN PLATS \n [Y] för ja/[N] för nej");
                 String chooseYourSeat = Console.ReadLine().ToLower();
                 if (chooseYourSeat == "y")
@@ -619,9 +621,9 @@ namespace BusBookingService
 
                 for (int j = 0; j < 21 - 1; j++)
                 {
-                    if (Convert.ToInt32(BusSeats[j, 4]) > Convert.ToInt32(BusSeats[j + 1, 4]))
+                    if (Convert.ToInt32(BusSeats[j, 4]) > Convert.ToInt32(BusSeats[j + 1, 4])) // Om den övere är mindre
                     {
-                        for (int k = 0; k < 6; k++)
+                        for (int k = 0; k < 6; k++) // Dom byter alla colummer med varandra
                         {
                         
                             (BusSeats[j + 1, k], BusSeats[j, k]) = (BusSeats[j, k], BusSeats[j + 1, k]);
