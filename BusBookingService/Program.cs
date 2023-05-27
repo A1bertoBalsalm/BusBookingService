@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -10,6 +11,8 @@ namespace BusBookingService
 {
     internal class Program
     {
+
+        // Jag använder c# namn standard
         //Rows = platser
         //Columm 0 = Förnamn
         //Columm 1 = Efternamn
@@ -21,8 +24,8 @@ namespace BusBookingService
         static Boolean[] Booked = new bool[21]; //Varje plats om den är tagen eller inte
         static String[,] BusSeats = new string[21, 6]; // Information om varje passagerae
   
-        static int free = 0;
-        static int freewindowseats = 0;
+        static int Free = 0;
+        static int FreeWindowSeats = 0;
 
         static int Adults = 0;
         static int Kids = 0;
@@ -37,37 +40,54 @@ namespace BusBookingService
 
 
 
-        static void Main(string[] args) => Meny();
+        static void Main(string[] args)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Meny();
+        } 
 
         static void Meny()
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(" BUS BOOKING SERVICE \n" +("").PadRight(24, '-')+ "\n 1. Book \n 2. Cancel Booking \n 3. Print Out ");
+            
+            Console.WriteLine(" BUS BOOKING SERVICE \n" +("").PadRight(24, '-')+ "\n [1] Book \n [2] Cancel Booking \n [3] Print Out \n [4] Profit \n [5] Exit  ");
 
-            string MenyChoice = Console.ReadLine();
-         ;
-            switch (Convert.ToInt32(MenyChoice))
+            string menyChoice = Console.ReadLine();
+            if (int.TryParse(menyChoice, out int choice))
             {
-                case 1:
-                    Book();
-                    break;
-                case 2:
-                    CancelBooking();
+                switch (Convert.ToInt32(choice))
+                {
+                    case 1:
+                        Book();
+                        break;
+                    case 2:
+                        CancelBooking();
+                        break;
+                    case 3:
+                        BusData();
+                        break;
 
-                    break;
-                case 3:
-                    BusData();
+                    case 4:
+                        double totalProfit = ProfitRecursion(Adults, Kids, Elderly);
+                        Console.WriteLine("\n Total profit: " + totalProfit + "kr \n");
+                        Meny();
+                        break;
+                    case 5:
+                        System.Environment.Exit(1);
+                        break;
+                    default:
+                        Console.WriteLine("Felaktig input");
+                        Meny();
+                        break;
+                }
 
-                    break;
-                case 4:
-                    System.Environment.Exit(1);
-                    break;
 
-                default:
-                    Meny();
-
-                    break;
             }
+            else
+            {
+                Console.WriteLine("Felaktig input");
+                Meny();
+            }
+
 
         }
 
@@ -80,47 +100,93 @@ namespace BusBookingService
 
             Search(); //Metod för att hitta lediga plateser
 
-            Console.WriteLine("\n BOOK \n" + ("").PadRight(24, '-')+"\n Antalet fria plaster: " + free+"\n Antalet fria fönster plaster: "+freewindowseats+"\n" + ("").PadRight(24, '-'));
-
-            Console.WriteLine(" [1] Fönsterplats \n [2] Vanlig plats \n [3] Meny ");
-
-            string BookChoice = Console.ReadLine();
-            
-            switch (Convert.ToInt32(BookChoice))
+            while (true)
             {
-                case 1:
-                    if (freewindowseats > 0)
-                    {
-                        SearchBooking(true);
-                        Console.WriteLine("dumbom");
-                    }
-                    else
-                    {
-                        // FIXA SENARE
-                    }
-                    break;
-                case 2:
-                    if(freewindowseats == free)
-                    {
-                        SearchBooking(false);
+                Console.WriteLine("\n BOOK \n" + ("").PadRight(24, '-') + "\n Antalet fria plaster: " + Free + "\n Antalet fria fönster plaster: " + FreeWindowSeats + "\n" + ("").PadRight(24, '-'));
 
-                    }
-                    else
+                Console.WriteLine(" [1] Fönsterplats \n [2] Vanlig plats \n [3] Meny ");
+
+                string bookChoice = Console.ReadLine();
+
+                if (int.TryParse(bookChoice, out int choice))
+                {
+                    switch (Convert.ToInt32(choice))
                     {
-                        SearchBooking(false);
-                        // Samma här
+                        case 1:
+                            if (FreeWindowSeats > 0)
+                            {
+                                SearchBooking(true);
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Det finns inga fönster platser");
+                                continue;
+                            }
+                        case 2:
+                            if (FreeWindowSeats == Free)
+                            {
+                                Console.WriteLine("Det finns inga vanliga platser");
+                                continue;
+
+                            }
+                            else
+                            {
+                                SearchBooking(false);
+                                break;
+                            }
+                        case 3:
+                            Meny();
+                            break;
+                        default:
+                            Console.WriteLine("Fel input, försök igen");
+                            continue;
                     }
-                    
-                    break;
-                case 3:
-                    Meny();
-                    break;
+
+                }
+                else
+                {
+                    Console.WriteLine("Felaktig input");
+                    continue;
+
+                }
 
 
-                default:
-                    Meny();
-                    break;
+
+
             }
+           
+
+        }
+
+        static double ProfitRecursion(int adults, int kids, int elderly) // En recursive metod som räknar profit för passagare
+        {
+            if (adults == 0 && kids == 0 && elderly == 0)
+            {
+                return 0; // Inga passagera då ingen profit
+            }
+
+            double total = 0;
+
+            if (adults > 0)
+            {
+                total += AdultsPrice;
+                adults--;
+            }
+            else if (kids > 0)
+            {
+                total += KidsPrice;
+                kids--;
+            }
+            else if (elderly > 0)
+            {
+                total += ElderlyPrice;
+                elderly--;
+            }
+
+            return total + ProfitRecursion(adults, kids, elderly); // Den kallar tillbaka med minskad antal passagera och adderar profiten
+
+
 
         }
 
@@ -128,57 +194,68 @@ namespace BusBookingService
         static void Search() // Leter efter lediga platser
         {
             
-            free = 0;
-            freewindowseats = 0;
-            int findwindowseats = 0;
-            Boolean freewindow = false;
+            Free = 0;
+            FreeWindowSeats = 0;
+            int findWindowSeats = 0;
+            Boolean freeWindow = false;
 
             for (int i = 0; i < Booked.Length; i++)
             {
 
+
                 if (false == Booked[i]) // Om platen är inte tagen
                 {
+                    Free++;
+                    freeWindow = true;
 
-                    free++;
-                    freewindow = true;
 
+                    
                 }
                 if (i == 17) // Vid 17 är det baksidan av bussen så tre sätten imellan
                 {
 
-                    findwindowseats -= 3;
+                    findWindowSeats -= 3;
 
                 }
-                if (findwindowseats == 0 || findwindowseats == 3) // Om det är en fönsterplats för att varje 0 och 3 varv i loopen finns det en fönsterplats
+                if (findWindowSeats == 0 || findWindowSeats == 3) // Om det är en fönsterplats för att varje 0 och 3 varv i loopen finns det en fönsterplats
                 {
                     
-                    if (freewindow) // Om vi vet att den är ledig från innan
+                    if (freeWindow) // Om vi vet att den är ledig från innan
                     {
-                        freewindowseats++;
+                        FreeWindowSeats++;
                     }
         
-                    if (findwindowseats == 3) 
+                    if (findWindowSeats == 3) 
                     {
-                        findwindowseats = -1;
+                        findWindowSeats = -1;
 
                     }
-                    findwindowseats++;
+                    findWindowSeats++;
 
                 }
                 else
                 {
-                    findwindowseats++;
+                    findWindowSeats++;
                 }
             
-                freewindow = false;
+                freeWindow = false;
+
+
+
+
 
             }
+
+ 
+
         }
 
-        static void SearchBooking(Boolean Window) // Ungeför likdan men window säger om kunden vill ha en fönsterplats
+
+
+        static void SearchBooking(Boolean window) // Ungeför likdan men window säger om kunden vill ha en fönsterplats
         {
             
-            int findwindowseats = 0;
+            int findWindowSeats = 0;
             
             
 
@@ -189,10 +266,10 @@ namespace BusBookingService
                 if (i == 17)
                 {
 
-                    findwindowseats -= 3;
+                    findWindowSeats -= 3;
 
                 }
-                else if (Window == true && (findwindowseats == 0 || findwindowseats == 3))     
+                else if (window == true && (findWindowSeats == 0 || findWindowSeats == 3))     
                 {
 
 
@@ -203,18 +280,18 @@ namespace BusBookingService
 
                     }
 
-                    if (findwindowseats == 3)
+                    if (findWindowSeats == 3)
                     {
-                        findwindowseats = -1;
+                        findWindowSeats = -1;
 
                     }
-                    findwindowseats++;
+                    findWindowSeats++;
 
 
 
                    
                 }
-                else if (Window == false && (findwindowseats != 0 && findwindowseats != 3))
+                else if (window == false && (findWindowSeats != 0 && findWindowSeats != 3))
                 {
 
                     if (Booked[i] == false)
@@ -228,7 +305,7 @@ namespace BusBookingService
                 }
                 else
                 {
-                    findwindowseats++;
+                    findWindowSeats++;
                    
                     
                 }
@@ -253,45 +330,69 @@ namespace BusBookingService
 
         static void UserInfo(int i) // Här skriver kunden in sin data
         {
-            Console.WriteLine("Plats: "+i);
+            Console.WriteLine("\nPlats: " + i);
 
-            Console.WriteLine("Namn ");
+            Console.WriteLine("\nNamn: ");
 
-            string Name = Console.ReadLine();
+            string name = Console.ReadLine();
 
-            Console.WriteLine("Efternman ");
+            Console.WriteLine("Efternman:");
 
-            string Lastname = Console.ReadLine();
+            string lastname = Console.ReadLine();
 
-            Console.WriteLine("Gender: [1] Man [2] Kvinna [3] Annan");
+            Console.WriteLine("Gender:\n [1] Man\n [2] Kvinna\n [3] Annan");
 
-            string Gender = Console.ReadLine();
+            string gender = Console.ReadLine();
 
-            switch (Int32.Parse(Gender))
+            switch (Int32.Parse(gender))
             {
                 case 1:
-                    Gender = "Man";
+                    gender = "Man";
                     break;
                 case 2:
-                    Gender = "Kvinna";
+                    gender = "Kvinna";
                     break;
 
                 default:
-                    Gender = "Annan";
+                    gender = "Annan";
                     break;
             }
+            string SSN;
+            int age;
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Personummer YYYYMMDD:");
 
-            Console.WriteLine("Personummer YYYYMMDD ");
+                    // SocialSecurityNumber
+                    SSN = Console.ReadLine();
 
-            // SocialSecurityNumber
-            string SSN = Console.ReadLine();
+                    // Tycke att det skulle vara tråkigt att göra det vanligt så här är lösningen för 05:or
+                    int year = Convert.ToInt32(SSN.Substring(0, 4));
+                    int month = Convert.ToInt32(SSN.Substring(4, 2));
+                    int day = Convert.ToInt32(SSN.Substring(6, 2));
 
+                    var born = new DateTime(year, month, day);
+                    var today = DateTime.Now;
+                    var diffOfDates = today - born;
+                    // Dagar delet till år som sedan kollar där nera om det är 18 upp
+                    age = Convert.ToInt32(diffOfDates.TotalDays) / 365;
+                    break;
+                }
+                catch (Exception e) {
+                    Console.WriteLine("Felaktig datum");
+                    continue;         
+                }
+              
+            }
+          
          
-            BusSeats[i, 0] = Name.ToLower();     // Så att vi kan söka efter den senare 
+            BusSeats[i, 0] = name.ToLower();     // Så att vi kan söka efter den senare 
 
-            BusSeats[i, 1] = Lastname.ToLower(); 
+            BusSeats[i, 1] = lastname.ToLower(); 
 
-            BusSeats[i, 3] = Gender; 
+            BusSeats[i, 3] = gender; 
 
             BusSeats[i, 2] = SSN;
 
@@ -299,66 +400,76 @@ namespace BusBookingService
             BusSeats[i, 5] = i.ToString();
            
 
-            // Tycke att det skulle vara tråkigt att göra det vanligt så här är lösningen för 05:or
-            int Year = Convert.ToInt32(SSN.Substring(0,4));
-            int Month = Convert.ToInt32(SSN.Substring(4,2));
-            int Day = Convert.ToInt32(SSN.Substring(6,2));
 
-            var born = new DateTime(Year, Month, Day);
-            var today = DateTime.Now;
-            var diffOfDates = today - born;
-            // Dagar delet till år som sedan kollar där nera om det är 18 upp
-            int Age = Convert.ToInt32(diffOfDates.TotalDays) / 365;
+            BusSeats[i, 4] =  age.ToString();
 
-            BusSeats[i, 4] =  Age.ToString();
+            
 
-
-            Double Pris;
+            Double pris;
             // Kollar vilket pris kunden ska få och lägger till dens årsgrupp i bussen
-            if(Age < 18)
+            if(age < 18)
             {
-                Console.WriteLine("du är underårig");
+                Console.WriteLine("\n Du är underårig");
                 Kids++;
-                Pris = KidsPrice;
+                pris = KidsPrice;
 
 
             }
-            else if(Age > 69) 
+            else if(age > 69) 
             {
- 
-                Console.WriteLine("du är gammal");
+
+            
+
+              
+                Console.WriteLine("\n Du är gammal");
                 Elderly++;
-                Pris = ElderlyPrice;
+                pris = ElderlyPrice;
 
             }
             else
             {
 
-                Console.WriteLine("du är myndig");
+                Console.WriteLine("\n Du är myndig");
                 Adults++;
-                Pris = AdultsPrice;
+                pris = AdultsPrice;
 
             }
 
-            Console.WriteLine("Total Priset "+(Pris.ToString())+"[1] Confimera"+" [2] Cancel");
-
-            String Confirm = Console.ReadLine();
-
-            switch(Convert.ToInt16(Confirm))
+            while (true)
             {
-                case 1:
-                    Booked[i] = true;
-                    Meny();
-                    break;
-                case 2:
-                    Meny();
+                Console.WriteLine("\n Total Priset " + (pris.ToString()) + "\n [1] Confimera\n [2] Cancel ");
 
-                    break;
-                default:
-                    Console.WriteLine("ost");
-                    break;  
+                String confirm = Console.ReadLine();
+                if (int.TryParse(confirm, out int choice))
+                {
+                    switch (Convert.ToInt16(choice))
+                    {
+                        case 1:
+                            Booked[i] = true;
+                            Meny();
+                            break;
+                        case 2:
+                            Meny();
+                            break;
+                        default:
+                            Console.WriteLine("Felaktig input");
+                            continue;
+
+                    }
+
+                }
+                else
+                {
+                    Console.WriteLine("Felaktig input");
+                    continue;
+
+                }
+
+
+           
 
             }
+         
 
 
         }
@@ -366,44 +477,55 @@ namespace BusBookingService
 
         // CANCEL BOOKING
 
-
         private static void CancelBooking()
         {
-            Console.WriteLine("[1] Avboka med ditt förnamn [2] Avboka med ditt Personnummer [3] Menu");
-            String Cancel = Console.ReadLine();
-            switch (Convert.ToInt16(Cancel))
+            Console.WriteLine(" Cancel Booking \n" + ("").PadRight(24, '-') + "\n [1] Avboka med ditt förnamn \n [2] Avboka med ditt Personnummer \n [3] Menu");
+            String cancel = Console.ReadLine();
+
+            if (int.TryParse(cancel, out int choice))
             {
-                case 1:
-                    Console.WriteLine("Skriv Ditt Namn");
-                    String Name = Console.ReadLine();
+                switch (Convert.ToInt16(choice))
+                {
+                    case 1:
+                        Console.WriteLine("Skriv Ditt Namn:");
+                        String name = Console.ReadLine();
 
-                    SearchUser(Name, 0);
-                    break;
-                case 2:
-                    Console.WriteLine("Skriv Ditt personnummer");
-                    String SSN = Console.ReadLine();
+                        SearchUser(name, 0);
+                        break;
+                    case 2:
+                        Console.WriteLine("Skriv Ditt personnummer:");
+                        String SSN = Console.ReadLine();
+                        SearchUser(SSN, 2);
+                        break;
+                    case 3:
+                        Meny();
+                        break;
+                    default:
+                        Console.WriteLine("Felaktig input");
+                        CancelBooking();
+                        break;
+                }
 
-                    SearchUser(SSN, 2);
-                    break;
-                case 3:
-                    Meny();
-                    break;
-                default:
-                    break;
             }
+            else
+            {
+                Console.WriteLine("Felaktig input");
+            }
+
+
 
             
            
         }
 
-        static void SearchUser(String DataSearch, int Datatype) // Dataserach är värdet på det som söks och Datatyp säger vilken sorts det är
+        static void SearchUser(String dataSearch, int dataType) // Dataserach är värdet på det som söks och Datatyp säger vilken sorts det är så platsen på rowen
         {
-            DataSearch = DataSearch.ToLower();
+            dataSearch = dataSearch.ToLower();
             //Columm 0 = Förnamn
             //Columm 1 = Efternamn
             //Columm 2 = Personnummer 
 
-            int[] FindBooked = new int[21];
+            int[] findBooked = new int[21];
 
 
             int j = 0;
@@ -411,33 +533,38 @@ namespace BusBookingService
             //Koller efter en match
             for (int i = 0; i < 21; i++)
             {
-                if (DataSearch == BusSeats[i, Datatype])
+                if (dataSearch == BusSeats[i, dataType]) 
                 {
-                    FindBooked[j] = i;
+                    findBooked[j] = i; //  Det är en array som ger alla siffror till alla matches
                     j++;
 
 
                 }
 
             }
-            
-            // Denna loop fungerar med att dubbelkolla om det är verkligen du
+            if (j == 0)
+            {
+                Console.WriteLine("Inga matchingar hittade");
+                CancelBooking();
+            }
+
+            // Denna loop fungerar med att dubbel kolla om det är verkligen du 
             for (int i = 0;i < j;i++) {
 
-                Console.WriteLine("Säte: " + BusSeats[FindBooked[i], 5] + " Namn: "+BusSeats[FindBooked[i], 0]+" Personnummer: "+BusSeats[FindBooked[i],2]);
-                Console.WriteLine("VARNING: ÄR DETTA DIN PLATS Y/N, N: Gå till nästa match");
-                String ChooseYourSeat = Console.ReadLine().ToLower();
-                if (ChooseYourSeat == "y")
+             
+                Console.WriteLine("Plats: " + BusSeats[findBooked[i], 5] + " Namn: "+BusSeats[findBooked[i], 0]+" Personnummer: "+BusSeats[findBooked[i],2]+ "\n VARNING: ÄR DETTA DIN PLATS \n [Y] för ja/[N] för nej");
+                String chooseYourSeat = Console.ReadLine().ToLower();
+                if (chooseYourSeat == "y")
                 {
-                    int AgeRemovePrice = Convert.ToInt32(BusSeats[FindBooked[i], 4]);
-                    if (AgeRemovePrice < 18)
+                    int ageRemovePrice = Convert.ToInt32(BusSeats[findBooked[i], 4]);
+                    if (ageRemovePrice < 18)
                     {
                         
                         Kids--;
                         
 
                     }
-                    else if (AgeRemovePrice >= 69)
+                    else if (ageRemovePrice >= 69)
                     {
                     
 
@@ -452,9 +579,15 @@ namespace BusBookingService
                      
                     }
 
-                    int CancelSeat = Int32.Parse(BusSeats[FindBooked[i], 5]);
-                    Booked[CancelSeat] = false;
- 
+                    int cancelSeat = Int32.Parse(BusSeats[findBooked[i], 5]);
+                    Booked[cancelSeat] = false;
+                    for (int k = 0; k < 5; k++)
+                    {
+                        BusSeats[findBooked[i], k] = null;
+
+         
+                    }
+
                     Console.WriteLine("Avbokad");
 
                     Meny();
@@ -467,11 +600,14 @@ namespace BusBookingService
                 }
 
             }
-            
+            Console.WriteLine("Du har hoppat över alla");
+            CancelBooking();
 
 
 
-            
+
+
+
 
         }
 
@@ -516,9 +652,9 @@ namespace BusBookingService
                 // Loop genom varje column
                 for (int j = 0; j < columm; j++)
                 {
-                    string Isitblank = BusSeats[i, j];
+                    string isItBlank = BusSeats[i, j];
                     
-                    if (string.IsNullOrEmpty(Isitblank)) // Är row blank
+                    if (string.IsNullOrEmpty(isItBlank)) // Är row blank
                     {
                         blank = true;
                         break;
@@ -533,9 +669,8 @@ namespace BusBookingService
                         Console.Write("\t");
                     }
                    
-
-
                 }
+
                 if (!blank) // Om den är inte blank gå till nästa linje
                 {
                     Console.WriteLine();
@@ -543,18 +678,14 @@ namespace BusBookingService
 
                
             }
-            double TotalProfit = (Kids*KidsPrice)+(Elderly*ElderlyPrice)+(Adults*AdultsPrice);
-            Console.WriteLine("Total profit: "+TotalProfit+"\n[3] Meny");
 
 
+            Console.WriteLine("Klicka en knapp för att gå vidare...");
+            Console.ReadKey();
+            Meny();
 
-
-            string Userinput = Console.ReadLine();
-            if (Userinput == "3")
-            {
-                Meny();
-
-            }
+            
+            
 
 
         }
